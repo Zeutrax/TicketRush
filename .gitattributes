@@ -1,0 +1,5 @@
+# Keep shell scripts runnable on Linux/macOS and batch files on Windows,
+# whatever line ending setting the cloning machine uses.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.jar binary
