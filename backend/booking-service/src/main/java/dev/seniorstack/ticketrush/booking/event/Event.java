@@ -24,6 +24,17 @@ public class Event {
         // for JPA
     }
 
+    /**
+     * Takes seats out of the pool. Reads fine, but under concurrent requests two
+     * transactions can both see the same "available" value and both succeed.
+     */
+    public void reserveSeats(int quantity) {
+        if (available < quantity) {
+            throw new SoldOutException(id, quantity, available);
+        }
+        available -= quantity;
+    }
+
     public Long getId() {
         return id;
     }
