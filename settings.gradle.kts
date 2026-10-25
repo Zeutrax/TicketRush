@@ -3,3 +3,5 @@ plugins {
 }
 
 rootProject.name = "ticketrush"
+
+include("backend:booking-service")
