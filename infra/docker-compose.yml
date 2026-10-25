@@ -13,3 +13,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  # Load test, only started on demand:
+  # docker compose -f infra/docker-compose.yml --profile loadtest run --rm k6
+  k6:
+    image: grafana/k6:2.3.0
+    profiles: ["loadtest"]
+    volumes:
+      - ./k6:/scripts:ro
+    environment:
+      BASE_URL: http://host.docker.internal:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: run /scripts/buy-tickets.js
