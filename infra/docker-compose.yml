@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: ticketrush-postgres
+    environment:
+      POSTGRES_DB: booking
+      POSTGRES_USER: ticketrush
+      POSTGRES_PASSWORD: ticketrush
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./scripts:/scripts:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ticketrush -d booking"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Load test, only started on demand:
+  # docker compose -f infra/docker-compose.yml --profile loadtest run --rm k6
+  k6:
+    image: grafana/k6:2.3.0
+    profiles: ["loadtest"]
+    volumes:
+      - ./k6:/scripts:ro
+    environment:
+      BASE_URL: http://host.docker.internal:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: run /scripts/buy-tickets.js
